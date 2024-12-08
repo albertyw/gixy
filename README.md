@@ -6,6 +6,9 @@ GIXY
 [![GitHub issues](https://img.shields.io/github/issues/dvershinin/gixy.svg?style=flat-square)](https://github.com/dvershinin/gixy/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/dvershinin/gixy.svg?style=flat-square)](https://github.com/dvershinin/gixy/pulls)
 
+> [!TIP]
+> This is an **actively maintained fork** of the original [Gixy](https://github.com/yandex/gixy) project by **Yandex LLC**.  
+
 # Overview
 <img align="right" width="192" height="192" src="docs/gixy.png">
 
@@ -33,6 +36,7 @@ Right now Gixy can find:
 *   [[add_header_content_type] Setting Content-Type via add_header](https://github.com/dvershinin/gixy/blob/master/docs/en/plugins/add_header_content_type.md)
 *   [[resolver_external] Using external DNS nameservers](https://blog.zorinaq.com/nginx-resolver-vulns/)
 *   [[version_disclosure] Using insecure values for server_tokens](https://github.com/dvershinin/gixy/blob/master/docs/en/plugins/version_disclosure.md)
+*   [[try_files_is_evil_too] The try_files directive is evil without open_file_cache](https://www.getpagespeed.com/server-setup/nginx-try_files-is-evil-too)
 
 You can find things that Gixy is learning to detect at [Issues labeled with "new plugin"](https://github.com/dvershinin/gixy/issues?q=is%3Aissue+is%3Aopen+label%3A%22new+plugin%22)
 

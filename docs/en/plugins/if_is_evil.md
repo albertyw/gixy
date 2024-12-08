@@ -27,9 +27,12 @@ if ($args ~ post=140){
 
 ## What to do instead
 
-Use [`try_files`](https://nginx.org/en/docs/http/ngx_http_core_module.html#try_files) if it suits your needs.  Use the "return ..." or "rewrite ... last" in other cases.  In some cases, it's also possible to move ifs to server level (where it's safe as only other rewrite module directives are allowed within it).
+Use the "return ..." or "rewrite ... last" if it suits your needs.
+You can allocate additional locations and `map` if you want to set variables based on conditions.
 
-E.g. the following may be used to safely change location which will be used to process request:
+In some cases, it's also possible to move `if`s to server level (where it's safe as only other rewrite module directives are allowed within it).
+
+E.g., the following may be used to safely change location which will be used to process request:
 
 ```nginx
 location / {
