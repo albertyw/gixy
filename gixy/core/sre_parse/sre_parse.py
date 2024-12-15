@@ -14,7 +14,7 @@ from __future__ import print_function
 
 """Internal support module for sre"""
 
-from sre_constants import *
+from .sre_constants import *
 
 SPECIAL_CHARS = ".\\[{()*+?^$|"
 REPEAT_CHARS = "*+?{"
