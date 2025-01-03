@@ -34,7 +34,7 @@ ESCAPES = {
     r"\r": (LITERAL, ord("\r")),
     r"\t": (LITERAL, ord("\t")),
     r"\v": (LITERAL, ord("\v")),
-    r"\\": (LITERAL, ord("\\")),
+    r"\\": (LITERAL, ord("\\"))
 }
 
 CATEGORIES = {
@@ -78,12 +78,8 @@ class Pattern:
         if name is not None:
             ogid = self.groupdict.get(name, None)
             if ogid is not None:
-                raise error(
-                    (
-                        "redefinition of group name %s as group %d; "
-                        "was group %d" % (repr(name), gid, ogid)
-                    )
-                )
+                raise error(("redefinition of group name %s as group %d; "
+                             "was group %d" % (repr(name), gid, ogid)))
             self.groupdict[name] = gid
         self.open.append(gid)
         return gid
@@ -169,7 +165,6 @@ class Tokenizer:
     def __init__(self, string):
         self.string = string
         self.index = 0
-        self.next = None
         self.__next()
 
     def __next(self):
@@ -240,13 +235,13 @@ def _class_escape(source, escape):
             escape = escape[2:]
             if len(escape) != 2:
                 raise error("bogus escape: %s" % repr("\\" + escape))
-            return LITERAL, int(escape, 16) & 0xFF
+            return LITERAL, int(escape, 16) & 0xff
         elif c in OCTDIGITS:
             # octal escape (up to three digits)
             while source.next in OCTDIGITS and len(escape) < 4:
                 escape = escape + source.get()
             escape = escape[1:]
-            return LITERAL, int(escape, 8) & 0xFF
+            return LITERAL, int(escape, 8) & 0xff
         elif c in DIGITS:
             raise error("bogus escape: %s" % repr(escape))
         if len(escape) == 2:
@@ -272,24 +267,21 @@ def _escape(source, escape, state):
                 escape = escape + source.get()
             if len(escape) != 4:
                 raise ValueError
-            return LITERAL, int(escape[2:], 16) & 0xFF
+            return LITERAL, int(escape[2:], 16) & 0xff
         elif c == "0":
             # octal escape
             while source.next in OCTDIGITS and len(escape) < 4:
                 escape = escape + source.get()
-            return LITERAL, int(escape[1:], 8) & 0xFF
+            return LITERAL, int(escape[1:], 8) & 0xff
         elif c in DIGITS:
             # octal escape *or* decimal group reference (sigh)
             if source.next in DIGITS:
                 escape = escape + source.get()
-                if (
-                    escape[1] in OCTDIGITS
-                    and escape[2] in OCTDIGITS
-                    and source.next in OCTDIGITS
-                ):
+                if (escape[1] in OCTDIGITS and escape[2] in OCTDIGITS and
+                            source.next in OCTDIGITS):
                     # got three octal digits; this is an octal escape
                     escape = escape + source.get()
-                    return LITERAL, int(escape[1:], 8) & 0xFF
+                    return LITERAL, int(escape[1:], 8) & 0xff
             # not an octal escape, so this is a group reference
             group = int(escape[1:])
             if group < state.groups:
@@ -297,12 +289,9 @@ def _escape(source, escape, state):
                     raise error("cannot refer to open group")
                 if state.lookbehind:
                     import warnings
-
-                    warnings.warn(
-                        "group references in lookbehind "
-                        "assertions are not supported",
-                        RuntimeWarning,
-                    )
+                    warnings.warn('group references in lookbehind '
+                                  'assertions are not supported',
+                                  RuntimeWarning)
                 return GROUPREF, group
             raise ValueError
         if len(escape) == 2:
@@ -390,7 +379,7 @@ def _parse_sub_cond(source, state, condgroup):
 _PATTERNENDERS = set("|)")
 _ASSERTCHARS = set("=!<")
 _LOOKBEHINDASSERTCHARS = set("=!")
-_REPEATCODES = {MIN_REPEAT, MAX_REPEAT}
+_REPEATCODES = set([MIN_REPEAT, MAX_REPEAT])
 
 
 def _parse(source, state):
@@ -565,7 +554,8 @@ def _parse(source, state):
                         if not name:
                             raise error("missing group name")
                         if not isname(name):
-                            raise error("bad character in group name %r" % name)
+                            raise error("bad character in group name %r" %
+                                        name)
                     elif sourcematch("="):
                         # named backreference
                         name = ""
@@ -579,21 +569,17 @@ def _parse(source, state):
                         if not name:
                             raise error("missing group name")
                         if not isname(name):
-                            raise error(
-                                "bad character in backref group name " "%r" % name
-                            )
+                            raise error("bad character in backref group name "
+                                        "%r" % name)
                         gid = state.groupdict.get(name)
                         if gid is None:
                             msg = "unknown group name: {0!r}".format(name)
                             raise error(msg)
                         if state.lookbehind:
                             import warnings
-
-                            warnings.warn(
-                                "group references in lookbehind "
-                                "assertions are not supported",
-                                RuntimeWarning,
-                            )
+                            warnings.warn('group references in lookbehind '
+                                          'assertions are not supported',
+                                          RuntimeWarning)
                         subpatternappend((GROUPREF, gid))
                         continue
                     else:
@@ -658,12 +644,9 @@ def _parse(source, state):
                             raise error("bad character in group name")
                     if state.lookbehind:
                         import warnings
-
-                        warnings.warn(
-                            "group references in lookbehind "
-                            "assertions are not supported",
-                            RuntimeWarning,
-                        )
+                        warnings.warn('group references in lookbehind '
+                                      'assertions are not supported',
+                                      RuntimeWarning)
                 else:
                     # flags
                     if not source.next in FLAGS:
@@ -754,6 +737,11 @@ def parse_template(source, pattern):
         else:
             pappend((LITERAL, literal))
 
+    sep = source[:0]
+    if type(sep) is type(""):
+        makechar = chr
+    else:
+        makechar = unichr
     while 1:
         this = sget()
         if this is None:
@@ -791,20 +779,21 @@ def parse_template(source, pattern):
                     this = this + sget()
                     if s.next in OCTDIGITS:
                         this = this + sget()
-                literal(chr(int(this[1:], 8) & 0xFF))
+                literal(makechar(int(this[1:], 8) & 0xff))
             elif c in DIGITS:
                 isoctal = False
                 if s.next in DIGITS:
                     this = this + sget()
-                    if c in OCTDIGITS and this[2] in OCTDIGITS and s.next in OCTDIGITS:
+                    if (c in OCTDIGITS and this[2] in OCTDIGITS and
+                                s.next in OCTDIGITS):
                         this = this + sget()
                         isoctal = True
-                        literal(chr(int(this[1:], 8) & 0xFF))
+                        literal(makechar(int(this[1:], 8) & 0xff))
                 if not isoctal:
                     a((MARK, int(this[1:])))
             else:
                 try:
-                    this = chr(ESCAPES[this][1])
+                    this = makechar(ESCAPES[this][1])
                 except KeyError:
                     pass
                 literal(this)
