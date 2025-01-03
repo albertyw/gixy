@@ -19,8 +19,9 @@ class Manager(object):
     def audit(self, file_path, file_data, is_stdin=False):
         LOG.debug("Audit config file: {fname}".format(fname=file_path))
         parser = NginxParser(
-            cwd=os.path.dirname(file_path) if not is_stdin else '',
-            allow_includes=self.config.allow_includes)
+            cwd=os.path.dirname(file_path) if not is_stdin else "",
+            allow_includes=self.config.allow_includes,
+        )
         self.root = parser.parse(content=file_data.read(), path_info=file_path)
 
         push_context(self.root)
@@ -55,6 +56,7 @@ class Manager(object):
                     pop_context()
 
     def _update_variables(self, directive):
+        """Update context with variables from directive"""
         # TODO(buglloc): finish him!
         if not directive.provide_variables:
             return
