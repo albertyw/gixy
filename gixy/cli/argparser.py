@@ -30,9 +30,9 @@ class GixyConfigParser(DefaultConfigFileParser):
                 continue
 
             white_space = '\\s*'
-            key = '(?P<key>[^:=;#\s]+?)'
-            value = white_space + '[:=\s]' + white_space + '(?P<value>.+?)'
-            comment = white_space + '(?P<comment>\\s[;#].*)?'
+            key = r'(?P<key>[^:=;#\s]+?)'
+            value = white_space + r'[:=\s]' + white_space + r'(?P<value>.+?)'
+            comment = white_space + r'(?P<comment>\s[;#].*)?'
 
             key_only_match = re.match('^' + key + comment + '$', line)
             if key_only_match:
