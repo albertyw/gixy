@@ -27,6 +27,7 @@ nav:
     - Allow specified without deny: en/plugins/allow_without_deny.md
     - Setting Content-Type via add_header: en/plugins/add_header_content_type.md
     - Using external DNS nameservers: https://blog.zorinaq.com/nginx-resolver-vulns/
+    - Unsafe path decoding with proxy_pass: https://joshua.hu/proxy-pass-nginx-decoding-normalizing-url-path-dangerous#nginx-proxy_pass
     - Version Disclosure: en/plugins/version_disclosure.md
   - 'Blog': 'https://www.getpagespeed.com/posts'
 markdown_extensions:
