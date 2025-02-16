@@ -2,7 +2,7 @@ import re
 import gixy
 from gixy.plugins.plugin import Plugin
 
-class ProxyPassNormalized(Plugin):
+class proxy_pass_normalized(Plugin):
     r"""
     This plugin detects if there is any path component (slash or more)
     after the host in a proxy_pass directive.
@@ -18,7 +18,7 @@ class ProxyPassNormalized(Plugin):
     directives = ['proxy_pass']
 
     def __init__(self, config):
-        super(ProxyPassNormalized, self).__init__(config)
+        super(proxy_pass_normalized, self).__init__(config)
         self.parse_uri_re = re.compile(r'(?P<scheme>[^?#/)]+://)?(?P<host>[^?#/)]+)(?P<path>/.*)?')
 
     def audit(self, directive):
