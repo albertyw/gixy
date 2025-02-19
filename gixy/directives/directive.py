@@ -37,6 +37,7 @@ class Directive:
 
     @property
     def parents(self):
+        """Get all parent blocks"""
         parent = self.parent
         while parent:
             yield parent
@@ -44,10 +45,19 @@ class Directive:
 
     @property
     def variables(self):
+        """Get all variables provided by this directive"""
         raise NotImplementedError()
 
-    def find_directive_in_scope(self, name):
-        """Find directive in the current scope"""
+    def find_directives_in_scope(self, name):
+        """Find directives in the current scope"""
+        for parent in self.parents:
+            directive = parent.some(name, flat=False)
+            if directive:
+                yield directive
+        return None
+
+    def find_single_directive_in_scope(self, name):
+        """Find a single directive in the current scope"""
         for parent in self.parents:
             directive = parent.some(name, flat=False)
             if directive:
@@ -55,10 +65,12 @@ class Directive:
         return None
 
     def __str__(self):
-        return "{name} {args};".format(name=self.name, args=" ".join(self.args))
+        return f"{self.name} {' '.join(self.args)};"
 
 
 class AddHeaderDirective(Directive):
+    """The add_header directive is used to add a header to the response"""
+
     nginx_name = "add_header"
 
     def __init__(self, name, args):
